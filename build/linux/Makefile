@@ -83,7 +83,8 @@ SRCSAVX = common/vec/intrinsic_sao_avx2.cc \
 		  common/vec/intrinsic_intra-pred_avx2.cc \
 		  common/vec/intrinsic_inter_pred_avx2.cc \
 		  common/vec/intrinsic_pixel_avx.cc \
-		  common/vec/intrinsic_idct_avx2.cc
+		  common/vec/intrinsic_idct_avx2.cc \
+		  common/vec/intrinsic_alf_avx2.c
 
 CFLAGS += -mmmx -msse -msse2 -msse3 -msse4 -msse4.1 -msse4.2 -msse4a -mssse3 -mavx
 # ASMSRC   = $(X86SRC:-32.asm=-64.asm)
