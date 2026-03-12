@@ -8549,7 +8549,7 @@ void intra_pred_bilinear_sse128_10bit(pel_t* pSrc, pel_t* dst, int i_dst, int di
     int x, y;
     int ishift_x = tab_log2[iWidth];
     int ishift_y = tab_log2[iHeight];
-    int ishift = min(ishift_x, ishift_y);
+    int ishift = DAVS2_MIN(ishift_x, ishift_y);
     int ishift_xy = ishift_x + ishift_y + 1;
     int offset = 1 << (ishift_x + ishift_y);
     int a, b, c, w, val;
