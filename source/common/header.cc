@@ -308,14 +308,6 @@ int parse_extension_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
 
     bs_align(bs);
 
-    davs2_log(mgr, DAVS2_LOG_INFO,
-              "Parsed sequence display extension: range=%u colour_description=%u primaries=%u trc=%u matrix=%u",
-              seq->head.sample_range,
-              seq->head.colour_description,
-              seq->head.colour_primaries,
-              seq->head.transfer_characteristics,
-              seq->head.matrix_coefficients);
-
     return 1;
 }
 
@@ -941,7 +933,7 @@ int create_dpb(davs2_mgr_t *mgr)
     int i;
 
     mgr->dpbsize = mgr->num_decoders + seq->picture_reorder_delay + 16;  /// !!! FIXME: decide dpb buffer size ?
-    mgr->dpbsize += 8;  // FIXME: ÐèÒª¼õÉÙ
+    mgr->dpbsize += 8;  // FIXME: ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 
     mem_size = mgr->dpbsize * sizeof(davs2_frame_t *)
         + davs2_frame_get_size(seq->i_enc_width, seq->i_enc_height, seq->head.chroma_format, 1) * mgr->dpbsize
