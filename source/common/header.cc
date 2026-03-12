@@ -275,6 +275,50 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
     return 0;
 }
 
+static
+int parse_extension_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
+{
+    int extension_id;
+
+    if (seq == NULL || seq->valid_flag == 0) {
+        return 0;
+    }
+
+    bs->i_bit_pos += 32; /* skip start code */
+    extension_id = u_v(bs, 4, "extension_start_code_identifier");
+
+    if (extension_id != SEQUENCE_DISPLAY_EXTENSION_ID) {
+        return 0;
+    }
+
+    seq->head.sequence_display_extension = 1;
+    seq->head.video_format = u_v(bs, 3, "video_format");
+    seq->head.sample_range = u_flag(bs, "sample_range");
+    seq->head.colour_description = u_flag(bs, "colour_description");
+
+    if (seq->head.colour_description) {
+        seq->head.colour_primaries = u_v(bs, 8, "colour_primaries");
+        seq->head.transfer_characteristics = u_v(bs, 8, "transfer_characteristics");
+        seq->head.matrix_coefficients = u_v(bs, 8, "matrix_coefficients");
+    } else {
+        seq->head.colour_primaries = 2;
+        seq->head.transfer_characteristics = 2;
+        seq->head.matrix_coefficients = 2;
+    }
+
+    bs_align(bs);
+
+    davs2_log(mgr, DAVS2_LOG_INFO,
+              "Parsed sequence display extension: range=%u colour_description=%u primaries=%u trc=%u matrix=%u",
+              seq->head.sample_range,
+              seq->head.colour_description,
+              seq->head.colour_primaries,
+              seq->head.transfer_characteristics,
+              seq->head.matrix_coefficients);
+
+    return 1;
+}
+
 
 /* ---------------------------------------------------------------------------
  * init deblock parame of one frame
@@ -1525,7 +1569,23 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
 
             break;
 
-        case SC_EXTENSION:
+        case SC_EXTENSION: {
+            if (h->task_info.taskmgr->seq_info.valid_flag) {
+                davs2_seq_t new_seq = h->task_info.taskmgr->seq_info;
+                int ret = parse_extension_header(h->task_info.taskmgr, &new_seq, p_bs);
+
+                if (ret < 0) {
+                    return -1;
+                }
+                if (ret > 0 && task_set_sequence_head(h->task_info.taskmgr, &new_seq) < 0) {
+                    return -1;
+                }
+            } else {
+                *bitpos += 32;
+            }
+            break;
+        }
+
         case SC_USER_DATA:
         case SC_SEQUENCE_END:
         case SC_VIDEO_EDIT_CODE:

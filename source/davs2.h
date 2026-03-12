@@ -138,6 +138,13 @@ typedef struct davs2_seq_info_t {
     uint32_t        bytes_per_sample;   /* bytes per sample */
     float           frame_rate;         /* frame rate */
     uint32_t        frame_rate_id;      /* frame rate code, mpeg12 [1...8] */
+    uint32_t        sequence_display_extension; /* sequence display extension present */
+    uint32_t        video_format;       /* video format from sequence display extension */
+    uint32_t        sample_range;       /* sample range (0: limited, 1: full) */
+    uint32_t        colour_description; /* colour description present */
+    uint32_t        colour_primaries;   /* colour primaries */
+    uint32_t        transfer_characteristics; /* transfer characteristics */
+    uint32_t        matrix_coefficients; /* matrix coefficients */
 } davs2_seq_info_t;  
 
 /* ---------------------------------------------------------------------------
